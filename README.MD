@@ -1,3 +1,6 @@
+![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Telegram Bot API](https://img.shields.io/badge/Telegram-Bot%20API-blue?logo=telegram)
 # TikTok Media Processor & Recognition Bot
 
 A high-performance media processing tool that bridges asynchronous audio recognition with automated filesystem management for Telegram.
