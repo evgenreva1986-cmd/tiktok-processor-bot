@@ -7,11 +7,15 @@ from telebot import types
 from telebot import apihelper
 from shazamio import Shazam
 from dotenv import load_dotenv
+from pydub import AudioSegment
 
 for binary in ['./ffmpeg', './ffprobe']:
     if os.path.exists(binary):
         st = os.stat(binary)
         os.chmod(binary, st.st_mode | stat.S_IEXEC)
+
+AudioSegment.converter = os.path.abspath("./ffmpeg")
+AudioSegment.ffprobe = os.path.abspath("./ffprobe")
 
 apihelper.CONNECT_TIMEOUT = 90
 apihelper.READ_TIMEOUT = 90
