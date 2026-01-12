@@ -156,10 +156,5 @@ def data_option(message):
         bot.send_message(message.chat.id, f"bot for extracting video/audio from a Tiktok link, also can guess the song in a link\n" \
         "This is a synchronous bot, so please <b><i>wait until it responds</i></b> to your request before asking another one",
         parse_mode="HTML")
-    else: 
-        bot.send_message(chat_id=message.chat.id,
-                        reply_to_message_id=message.message_id,
-                        text="This message doesnt look like command, please enter <b>tiktok link or commands</b>",
-                        parse_mode="HTMl")
 clean()
 bot.infinity_polling()
