@@ -53,6 +53,11 @@ API_TOKEN=your_telegram_bot_token_here
 
 python main.py
 ```
+## 🚀 Try it out
+Click the button below to start the bot:
+
+[![Start Bot](https://img.shields.io/badge/Start_on_Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/link_to_vid_tt_bot)
+
 ## Future Improvements
 * Asynchronous Migration: Transitioning to aiogram for superior concurrency and production-grade stability.
 
