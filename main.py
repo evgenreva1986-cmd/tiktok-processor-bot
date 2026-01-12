@@ -53,7 +53,6 @@ def download_mp4(url, f_id):
 
 def download_mp3(url, file_id):
     ydl_opts = {
-        'ffmpeg_location': './',
         "format": "bestaudio/best",
         "outtmpl": f"{file_id}.%(ext)s",
         "postprocessors": [{
@@ -73,7 +72,7 @@ def clean():
         if file.endswith(("mp4","mp3")):
             os.remove(file)
             print(f"file {file} deleted")
-            
+
 @bot.message_handler(commands=['start'])
 def welcome(message):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -167,4 +166,4 @@ def data_option(message):
         "This is a synchronous bot, so please <b><i>wait until it responds</i></b> to your request before asking another one",
         parse_mode="HTML")
 clean()
-bot.infinity_polling()
+bot.infinity_polling(timeout=10, long_polling_timeout=5)
