@@ -1,0 +1,6 @@
+pyTelegramBotAPI
+shazamio
+yt-dlp
+python-dotenv
+aiohttp
+aiofiles
