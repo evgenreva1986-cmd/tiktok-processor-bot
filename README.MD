@@ -26,23 +26,29 @@ A high-performance media processing tool that bridges asynchronous audio recogni
 ## Project Structure
 
 ```text
-├── main.py           # Main bot logic and handlers
-├── .env              # Private API tokens (Hidden)
-├── .gitignore        # Rules for Git (Excludes .env and venv)
-├── LICENSE           # MIT License file
-├── README.md         # Documentation
-├── ffmpeg.exe        # Multimedia framework (Windows)
-└── ffprobe.exe       # Multimedia streams analyzer
+├── main.py            # Main script with bot logic and handlers
+├── ffmpeg             # Linux binary for multimedia processing
+├── ffprobe            # Linux binary for media stream analysis
+├── requirements.txt   # Python dependencies and libraries
+├── Aptfile            # System packages configuration for hosting
+├── buildpacks         # Custom build configurations for deployment
+├── .python-version    # Specifies the Python version for the environment
+├── .gitignore         # Git rules to exclude sensitive or temporary files
+├── LICENSE            # MIT License agreement
+├── README.md          # Project documentation and setup guide
+└── demo.png           # Visual preview or screenshot of the bot
 ```
 ## Installation & Setup
 ### 1. Install Dependencies
-```Bash
-
-pip install pyTelegramBotAPI yt-dlp shazamio python-dotenv
+```bash
+pip install -r requirements.txt
 ```
 ## 2. FFmpeg Configuration
-Place `ffmpeg.exe` and `ffprobe.exe` in the project root directory or ensure they are available in your system's PATH.
-
+The project uses custom Linux binaries included in the repository. Ensure that the ffmpeg and ffprobe files in the root directory have executable permissions:
+```Bash
+chmod +x ffmpeg ffprobe
+```
+Note: If you are developing on Windows, you will need the Windows versions (.exe) of these binaries.
 ## 3. Environment Variables
 Create a `.env` file in the root directory and add your bot token:
 ```Bash

@@ -66,10 +66,13 @@ def download_mp3(url, file_id):
         }],
         'ffmpeg_location': '.',
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-    return f"{file_id}.mp3"
-
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+        return f"{file_id}.mp3"
+    except Exception as e:
+        return "Sorry, there was an error downloading the audio.\nTry again or send another link"
+    
 def clean():
     files = os.listdir(".")
     for file in files:
@@ -131,35 +134,45 @@ def call_handl(call):
         bot_message = bot.send_message(call.message.chat.id,"converting mp4 to mp3 file...")
 
         file_aud = download_mp3(url, file_name)
-        bot.edit_message_text(chat_id=call.message.chat.id,
-                                message_id=bot_message.message_id,
-                                text="uploading audio...")
-        
-        with open(file_aud, "rb") as audio:
-            bot.send_audio(call.message.chat.id, audio)
+        if file_aud.endswith(".mp3"):
+            bot.edit_message_text(chat_id=call.message.chat.id,
+                                    message_id=bot_message.message_id,
+                                    text="uploading audio...")
+            
+            with open(file_aud, "rb") as audio:
+                bot.send_audio(call.message.chat.id, audio)
  
-        script_path = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_path, file_aud)
-        os.remove(file_path)
+            script_path = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(script_path, file_aud)
+            os.remove(file_path)
+        else: 
+            bot.edit_message_text(chat_id=call.message.chat.id,
+                                  message_id=bot_message.message_id,
+                                  text=file_aud)
 
     elif call.data == "track_info":
         bot_message = bot.send_message(call.message.chat.id, "connecting to shazam data base...")
 
         file_aud = download_mp3(url, file_name)
-        script_path = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_path, file_aud)
-        
-        mes_text = asyncio.run(find_song_info(file_path))
-        bot.edit_message_text(chat_id=call.message.chat.id,
-                               message_id=bot_message.message_id, 
-                               text=mes_text,
-                               parse_mode="HTML")
-        
-        bot.send_message(chat_id=call.message.chat.id, 
-                        reply_to_message_id=bot_message.message_id,
-                        text="information about music can be <i>not fully acurate</i>",
-                        parse_mode="HTML")
-        os.remove(file_path)
+        if file_aud.endswith(".mp3"):
+            script_path = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(script_path, file_aud)
+            
+            mes_text = asyncio.run(find_song_info(file_path))
+            bot.edit_message_text(chat_id=call.message.chat.id,
+                                message_id=bot_message.message_id, 
+                                text=mes_text,
+                                parse_mode="HTML")
+            
+            bot.send_message(chat_id=call.message.chat.id, 
+                            reply_to_message_id=bot_message.message_id,
+                            text="information about music can be <i>not fully acurate</i>",
+                            parse_mode="HTML")
+            os.remove(file_path)
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id,
+                                  message_id=bot_message.message_id,
+                                  text=file_aud)
 
 @bot.message_handler(func=lambda message: True)
 def data_option(message):
