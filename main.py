@@ -2,10 +2,16 @@ import telebot
 import yt_dlp
 import asyncio
 import os
+import stat
 from telebot import types
 from telebot import apihelper
 from shazamio import Shazam
 from dotenv import load_dotenv
+
+for binary in ['./ffmpeg', './ffprobe']:
+    if os.path.exists(binary):
+        st = os.stat(binary)
+        os.chmod(binary, st.st_mode | stat.S_IEXEC)
 
 apihelper.CONNECT_TIMEOUT = 90
 apihelper.READ_TIMEOUT = 90
@@ -32,9 +38,11 @@ async def find_song_info(filename):
     except Exception as e:
         print(e)
         return "sorry, there is a problem with connection to shazam, please try again"
+    
 def download_mp4(url, f_id):
     filename = str(f_id) + ".mp4"
     ydl_opts = {
+        'ffmpeg_location': './',
         "format": "best",
         "outtmpl": filename
     }
@@ -45,6 +53,7 @@ def download_mp4(url, f_id):
 
 def download_mp3(url, file_id):
     ydl_opts = {
+        'ffmpeg_location': './',
         "format": "bestaudio/best",
         "outtmpl": f"{file_id}.%(ext)s",
         "postprocessors": [{
@@ -64,6 +73,7 @@ def clean():
         if file.endswith(("mp4","mp3")):
             os.remove(file)
             print(f"file {file} deleted")
+            
 @bot.message_handler(commands=['start'])
 def welcome(message):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
