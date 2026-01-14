@@ -21,6 +21,7 @@ apihelper.CONNECT_TIMEOUT = 90
 apihelper.READ_TIMEOUT = 90
 
 load_dotenv()
+user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 TOKEN = os.getenv("API_TOKEN")
 
 bot = telebot.TeleBot(TOKEN)
@@ -48,6 +49,7 @@ def download_mp4(url, f_id):
     ydl_opts = {
         'ffmpeg_location': './',
         "format": "best",
+        "user_agent":user_agent,
         "outtmpl": filename
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -58,6 +60,7 @@ def download_mp4(url, f_id):
 def download_mp3(url, file_id):
     ydl_opts = {
         "format": "bestaudio/best",
+        "user_agent":user_agent,
         "outtmpl": f"{file_id}.%(ext)s",
         "postprocessors": [{
             "key": "FFmpegExtractAudio",
