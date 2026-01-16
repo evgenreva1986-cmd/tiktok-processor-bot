@@ -47,6 +47,7 @@ async def find_song_info(filename):
 def download_mp4(url, f_id):
     filename = str(f_id) + ".mp4"
     ydl_opts = {
+        "impersonate": "chrome",
         'ffmpeg_location': './',
         "format": "best",
         "user_agent":user_agent,
@@ -59,6 +60,7 @@ def download_mp4(url, f_id):
 
 def download_mp3(url, file_id):
     ydl_opts = {
+        "impersonate": "chrome",
         "format": "bestaudio/best",
         "user_agent":user_agent,
         "outtmpl": f"{file_id}.%(ext)s",
