@@ -1,7 +1,6 @@
 pyTelegramBotAPI
 shazamio
 yt-dlp
-curl_cffi
 python-dotenv
 aiohttp
 aiofiles

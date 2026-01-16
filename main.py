@@ -3,6 +3,7 @@ import yt_dlp
 import asyncio
 import os
 import stat
+import random
 from telebot import types
 from telebot import apihelper
 from shazamio import Shazam
@@ -47,11 +48,23 @@ async def find_song_info(filename):
 def download_mp4(url, f_id):
     filename = str(f_id) + ".mp4"
     ydl_opts = {
-        "impersonate": "chrome110",
-        'ffmpeg_location': './',
-        "format": "best",
-        "user_agent":user_agent,
-        "outtmpl": filename
+        'format': 'best',
+    'outtmpl': filename,
+    'ffmpeg_location': './',  
+    'user_agent': user_agent, 
+    'quiet': True,
+    'no_warnings': True,
+   
+    'extractor_args': {
+        'tiktok': {
+            'web_id': f'73{random.randint(10000000000000000, 99999999999999999)}'
+        }
+    },
+    'http_headers': {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://www.tiktok.com/',
+    }
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
@@ -60,16 +73,27 @@ def download_mp4(url, f_id):
 
 def download_mp3(url, file_id):
     ydl_opts = {
-        "impersonate": "chrome110",
-        "format": "bestaudio/best",
-        "user_agent":user_agent,
-        "outtmpl": f"{file_id}.%(ext)s",
-        "postprocessors": [{
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
-        }],
-        'ffmpeg_location': '.',
+        'format': 'bestaudio/best',
+    'outtmpl': f"{file_id}.%(ext)s",
+    'ffmpeg_location': './', 
+    'user_agent': user_agent,
+    'quiet': True,
+    'no_warnings': True,
+    'extractor_args': {
+        'tiktok': {
+            'web_id': f'73{random.randint(10000000000000000, 99999999999999999)}'
+        }
+    },
+    'http_headers': {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://www.tiktok.com/',
+    },
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
