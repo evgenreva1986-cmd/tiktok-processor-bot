@@ -1,6 +1,6 @@
 pyTelegramBotAPI
 shazamio
-yt-dlp
+yt-dlp>=2025.01.12
 python-dotenv
 aiohttp
 aiofiles
