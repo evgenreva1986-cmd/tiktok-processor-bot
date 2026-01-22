@@ -1,6 +1,6 @@
+https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz
 pyTelegramBotAPI
 shazamio
-yt-dlp>=2025.01.12
 python-dotenv
 aiohttp
 aiofiles
