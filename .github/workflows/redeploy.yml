@@ -14,5 +14,4 @@ jobs:
           curl -X POST "https://app.koyeb.com/v1/services/${{ secrets.KOYEB_SERVICE_ID }}/redeploy" \
           -H "Authorization: Bearer ${{ secrets.KOYEB_TOKEN }}" \
           -H "Content-Type: application/json" \
-          -H "Accept: application/json" \
-          -d '{}'
+          -d ''
