@@ -2,7 +2,7 @@ name: Scheduled Redeploy
 
 on:
   schedule:
-    - cron: '0 */3 * * *' 
+    - cron: '17 */3 * * *' 
   workflow_dispatch: 
 
 jobs:
