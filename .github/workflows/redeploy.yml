@@ -2,8 +2,8 @@ name: Scheduled Redeploy
 
 on:
   schedule:
-    - cron: '37 */3 * * *' 
-  workflow_dispatch: 
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
 
 jobs:
   redeploy:
@@ -11,7 +11,8 @@ jobs:
     steps:
       - name: Trigger Koyeb API
         run: |
-          curl -X POST https://app.koyeb.com/v1/services/${{ secrets.KOYEB_SERVICE_ID }}/redeploy \
+          curl -X POST "https://app.koyeb.com/v1/services/${{ secrets.KOYEB_SERVICE_ID }}/redeploy" \
           -H "Authorization: Bearer ${{ secrets.KOYEB_TOKEN }}" \
           -H "Content-Type: application/json" \
+          -H "Accept: application/json" \
           -d '{}'
