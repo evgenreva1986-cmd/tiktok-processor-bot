@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Trigger Koyeb API
         run: |
-          curl -X POST "https://app.koyeb.com/v1/services/${{ secrets.KOYEB_SERVICE_ID }}/redeploy" \
+          curl -v -X POST "https://app.koyeb.com/v1/services/${{ secrets.KOYEB_SERVICE_ID }}/redeploy" \
           -H "Authorization: Bearer ${{ secrets.KOYEB_TOKEN }}" \
           -H "Content-Type: application/json" \
-          -d ''
+          -H "Content-Length: 0"
