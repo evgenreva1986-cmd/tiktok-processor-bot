@@ -1,8 +1,9 @@
+#refresh
 name: Scheduled Redeploy
 
 on:
   schedule:
-    - cron: '17 */3 * * *'
+    - cron: '24 */3 * * *'
   workflow_dispatch:
 
 jobs:
