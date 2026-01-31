@@ -9,6 +9,7 @@ from telebot import apihelper
 from shazamio import Shazam
 from dotenv import load_dotenv
 from pydub import AudioSegment
+from db_users import users_info
 
 for binary in ['./ffmpeg', './ffprobe']:
     if os.path.exists(binary):
@@ -24,9 +25,11 @@ apihelper.READ_TIMEOUT = 90
 load_dotenv()
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 TOKEN = os.getenv("API_TOKEN")
+admin_id = int(os.getenv("ADMIN_ID"))
 
 bot = telebot.TeleBot(TOKEN)
 shazam = Shazam()
+data_base = users_info()
 
 async def find_song_info(filename):
     try:
@@ -116,11 +119,22 @@ def welcome(message):
     btn2 = types.KeyboardButton("Info")
     kb.add(btn1)
     kb.add(btn2)
+    if message.from_user.id == admin_id:
+        admin_button = types.KeyboardButton("Check user info")
+        kb.add(admin_button)
     bot.send_message(message.chat.id, "choose option:", reply_markup=kb) 
 
 @bot.message_handler(func=lambda message: "tiktok.com" in message.text.lower())
 def link_hand(message):
     url = message.text
+
+    name_show = "Not define"
+    if message.from_user.username == None:
+        name_show = message.from_user.first_name
+    else:
+        name_show = message.from_user.username
+    data_base.add_info(message.from_user.id, name_show, message.text)
+
     bot_message = bot.send_message(message.chat.id, "Converting link to mp4...", 
         reply_to_message_id=message.message_id)
     filename = f"{message.chat.id}_{message.message_id}"
@@ -211,5 +225,9 @@ def data_option(message):
         bot.send_message(message.chat.id, f"bot for extracting video/audio from a Tiktok link, also can guess the song in a link\n" \
         "This is a synchronous bot, so please <b><i>wait until it responds</i></b> to your request before asking another one",
         parse_mode="HTML")
+    if message.from_user.id == admin_id:
+        if message.text == "Check user info":
+            info = data_base.return_info()
+            bot.send_message(message.chat.id, f"{info}")
 clean()
 bot.infinity_polling(timeout=10, long_polling_timeout=5)
