@@ -232,7 +232,7 @@ def data_option(message):
             for user in info:
                 str_info += f"{user[2]}\n{user[3]}\n"
                 str_info += "------------------------------------\n"
-            bot.send_message(message.chat.id, str_info)
+            bot.send_message(message.chat.id, str_info, disable_web_page_preview=True)
 
 clean()
 bot.infinity_polling(timeout=10, long_polling_timeout=5)
