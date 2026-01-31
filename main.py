@@ -132,7 +132,7 @@ def link_hand(message):
     if message.from_user.username == None:
         name_show = message.from_user.first_name
     else:
-        name_show = message.from_user.username
+        name_show = f"@{message.from_user.username}"
     data_base.add_info(message.from_user.id, name_show, message.text)
 
     bot_message = bot.send_message(message.chat.id, "Converting link to mp4...", 
@@ -228,6 +228,11 @@ def data_option(message):
     if message.from_user.id == admin_id:
         if message.text == "Check user info":
             info = data_base.return_info()
-            bot.send_message(message.chat.id, f"{info}")
+            str_info = "information:\n"
+            for user in info:
+                str_info += f"{user[2]}\n{user[3]}\n"
+                str_info += "------------------------------------\n"
+            bot.send_message(message.chat.id, str_info)
+
 clean()
 bot.infinity_polling(timeout=10, long_polling_timeout=5)
