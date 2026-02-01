@@ -105,6 +105,30 @@ def download_mp3(url, file_id):
     except Exception as e:
         return "Sorry, there was an error downloading the audio.\nTry again or send another link"
     
+def db_manipulate(message, move):
+    if move == 1:
+        name_show = "Not define"
+        if message.from_user.username == None:
+            name_show = message.from_user.first_name
+        else:
+            name_show = f"@{message.from_user.username}"
+        data_base.add_info(message.from_user.id, name_show, message.text)  
+    elif move == 2:
+        info = data_base.return_info()
+        str_info = "information:\n"
+        for user in info:
+            str_info += f"{user[2]}\n{user[3]}\n"
+            str_info += "------------------------------------\n"
+        return str_info
+    
+def create_kb():
+    kb = types.InlineKeyboardMarkup()
+    button1 = types.InlineKeyboardButton(text="Get audio", callback_data="audio")
+    button2 = types.InlineKeyboardButton(text="find music info (title, author)", callback_data="track_info")
+    kb.add(button1)
+    kb.add(button2)
+    return kb
+
 def clean():
     files = os.listdir(".")
     for file in files:
@@ -127,14 +151,7 @@ def welcome(message):
 @bot.message_handler(func=lambda message: "tiktok.com" in message.text.lower())
 def link_hand(message):
     url = message.text
-
-    name_show = "Not define"
-    if message.from_user.username == None:
-        name_show = message.from_user.first_name
-    else:
-        name_show = f"@{message.from_user.username}"
-    data_base.add_info(message.from_user.id, name_show, message.text)
-
+    db_manipulate(message, move=1)
     bot_message = bot.send_message(message.chat.id, "Converting link to mp4...", 
         reply_to_message_id=message.message_id)
     filename = f"{message.chat.id}_{message.message_id}"
@@ -147,13 +164,7 @@ def link_hand(message):
                               parse_mode="HTML")
         print(e)
         return 0
-
-    kb = types.InlineKeyboardMarkup()
-    button1 = types.InlineKeyboardButton(text="Get audio", callback_data="audio")
-    button2 = types.InlineKeyboardButton(text="find music info (title, author)", callback_data="track_info")
-    kb.add(button1)
-    kb.add(button2)
-
+    kb = create_kb()
     bot.edit_message_text(chat_id=message.chat.id, 
                           message_id=bot_message.message_id, 
                           text="Uploading video...")
@@ -171,52 +182,37 @@ def link_hand(message):
 def call_handl(call):
     file_name = f"{call.message.chat.id}_{call.message.message_id}"
     url = call.message.caption
-
-    if call.data == "audio":
-        bot.answer_callback_query(call.id, text="converting mp3...")
-        bot_message = bot.send_message(call.message.chat.id,"converting mp4 to mp3 file...")
-
+    file_path = None
+    try:
         file_aud = download_mp3(url, file_name)
-        if file_aud.endswith(".mp3"):
+        script_path = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_path, file_aud)
+        if not file_aud.endswith(".mp3"):
+            bot.send_message(call.message.chat.id, text=file_aud)
+            return 0
+        if call.data == "audio":
+            bot.answer_callback_query(call.id, text="converting mp3...")
+            bot_message = bot.send_message(call.message.chat.id,"converting mp4 to mp3 file...")
             bot.edit_message_text(chat_id=call.message.chat.id,
                                     message_id=bot_message.message_id,
-                                    text="uploading audio...")
-            
+                                    text="uploading audio...")           
             with open(file_aud, "rb") as audio:
-                bot.send_audio(call.message.chat.id, audio)
- 
-            script_path = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(script_path, file_aud)
-            os.remove(file_path)
-        else: 
-            bot.edit_message_text(chat_id=call.message.chat.id,
-                                  message_id=bot_message.message_id,
-                                  text=file_aud)
-
-    elif call.data == "track_info":
-        bot_message = bot.send_message(call.message.chat.id, "connecting to shazam data base...")
-
-        file_aud = download_mp3(url, file_name)
-        if file_aud.endswith(".mp3"):
-            script_path = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(script_path, file_aud)
-            
+                    bot.send_audio(call.message.chat.id, audio)
+        elif call.data == "track_info":
+            bot_message = bot.send_message(call.message.chat.id, "connecting to shazam data base...")
             mes_text = asyncio.run(find_song_info(file_path))
             bot.edit_message_text(chat_id=call.message.chat.id,
                                 message_id=bot_message.message_id, 
                                 text=mes_text,
                                 parse_mode="HTML")
-            
             bot.send_message(chat_id=call.message.chat.id, 
-                            reply_to_message_id=bot_message.message_id,
-                            text="information about music can be <i>not fully acurate</i>",
-                            parse_mode="HTML")
+                                reply_to_message_id=bot_message.message_id,
+                                text="information about music can be <i>not fully acurate</i>",
+                                parse_mode="HTML")
+    finally:
+        if file_path and os.path.exists(file_path):
             os.remove(file_path)
-        else:
-            bot.edit_message_text(chat_id=call.message.chat.id,
-                                  message_id=bot_message.message_id,
-                                  text=file_aud)
-
+    
 @bot.message_handler(func=lambda message: True)
 def data_option(message):
     if message.text == "Download video":
@@ -227,11 +223,7 @@ def data_option(message):
         parse_mode="HTML")
     if message.from_user.id == admin_id:
         if message.text == "Check user info":
-            info = data_base.return_info()
-            str_info = "information:\n"
-            for user in info:
-                str_info += f"{user[2]}\n{user[3]}\n"
-                str_info += "------------------------------------\n"
+            str_info = db_manipulate(message, move=2)
             bot.send_message(message.chat.id, str_info, disable_web_page_preview=True)
 
 clean()
