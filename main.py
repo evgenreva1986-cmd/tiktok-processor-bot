@@ -178,7 +178,7 @@ def link_hand(message):
     file_path = os.path.join(script_path, file_vid)
     os.remove(file_path)
     if message.from_user.id != admin_id:
-        bot.send_message(admin_id, f"Someone used the bot: {message.from_user.id}")
+        bot.send_message(admin_id, f"user {message.from_user.first_name} (ID: {message.from_user.id})used bot")
 
 @bot.callback_query_handler(func = lambda call: True)
 def call_handl(call):
